@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #121212;
+  color: #e6e6e6;
+}
+
+h2, h3 {
+  text-align: center;
+  margin: 1rem 0;
+  font-weight: bold; /* Set to bold */
+  color: #25D366;
+}
+
+.videos {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.videos span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+video {
+  width: 800px;
+  height: 500px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: #1f1f1f;
+}
+
+button {
+  font-size: 1rem;
+  font-weight: bold; /* Set to bold */
+  padding: 0.8rem 1.2rem;
+  margin: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #25D366;
+  color: #ffffff;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:disabled {
+  background: #4d4d4d;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background: #1ebd5a;
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+input {
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  font-weight: bold; /* Set to bold */
+  border-radius: 5px;
+  border: 1px solid #333;
+  background: #2a2a2a;
+  color: #e6e6e6;
+  outline: none;
+}
+
+input:focus {
+  border-color: #25D366;
+}
+
+p {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: bold; /* Set to bold */
+  color: #aaa;
+  margin: 0.5rem;
+}
+
+.username {
+  font-size: 1.2rem;
+  font-weight: bold; /* Set to bold */
+  color: #25D366;
+  margin-top: 0.5rem;
+  font-family: 'Syne Mono', monospace;
+}
+
+.chat-box {
+  width: 100%;
+  height: 200px;
+  overflow-y: scroll;
+  border: 1px solid #333;
+  padding: 10px;
+  background-color: #1f1f1f;
+  color: #e6e6e6;
+  border-radius: 5px;
+  margin-top: 1rem;
+}
+
+.message {
+  margin: 5px 0;
+  font-weight: bold; /* Set to bold */
+}
+
+#chatInput {
+  width: 80%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  font-weight: bold; /* Set to bold */
+  border-radius: 5px;
+  border: 1px solid #333;
+  background: #2a2a2a;
+  color: #e6e6e6;
+}
+
+#sendButton {
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  font-weight: bold; /* Set to bold */
+  border: none;
+  border-radius: 5px;
+  background: #25D366;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+#sendButton:disabled {
+  background: #4d4d4d;
+  cursor: not-allowed;
+}
+
+.message a {
+  color: #25D366;
+  font-weight: bold; /* Set to bold */
+  text-decoration: underline;
+}
+
+.message a:hover {
+  color: #1ebd5a;
+}
+
+.pdf-viewer {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 10;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+#pdfViewer {
+  width: 100%;
+  height: 90%;
+  border: none;
+}
+
+#closePdfButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-weight: bold; /* Set to bold */
+  background: #25D366;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
