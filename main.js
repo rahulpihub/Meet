@@ -1,7 +1,7 @@
 import './style.css';
-
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBdCyzpyIWdJmTU5t2vyplFHlafuHoFw-o",
@@ -17,6 +17,7 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 const firestore = firebase.firestore();
+const storage = firebase.storage();
 
 const servers = {
   iceServers: [
@@ -27,16 +28,17 @@ const servers = {
   iceCandidatePoolSize: 10,
 };
 
-// Global State
 const pc = new RTCPeerConnection(servers);
 let localStream = null;
 let remoteStream = null;
 let localUsername = "";
 let remoteUsername = "";
-let pdfDummyStore = {};  // Dummy store for PDFs
+let callDoc = null;
+let isCallActive = true;
 
-// HTML elements
 const webcamButton = document.getElementById('webcamButton');
+const webcamToggleButton = document.getElementById('webcamToggleButton');
+const audioToggleButton = document.getElementById('audioToggleButton');
 const webcamVideo = document.getElementById('webcamVideo');
 const callButton = document.getElementById('callButton');
 const callInput = document.getElementById('callInput');
@@ -51,18 +53,39 @@ const chatMessages = document.getElementById('chatMessages');
 const chatInput = document.getElementById('chatInput');
 const sendButton = document.getElementById('sendButton');
 const fileInput = document.getElementById('fileInput');
-const sendFileButton = document.getElementById('sendFileButton');
+const viewFileButton = document.getElementById('viewFileButton');
 const pdfViewerContainer = document.getElementById('pdfViewerContainer');
 const pdfViewer = document.getElementById('pdfViewer');
 const closePdfButton = document.getElementById('closePdfButton');
 
-// Event listener for username input
+// Dropdown elements
+const resumeViewer = document.getElementById('resumeViewer');
+const reportViewer = document.getElementById('reportViewer');
+const resumeOptions = document.getElementById('resumeOptions');
+
 usernameInput.onchange = () => {
   localUsername = usernameInput.value;
   localUsernameDiv.textContent = localUsername;
 };
 
-// 1. Setup media sources
+// Toggle dropdown visibility on button click
+document.querySelector('.dropdown-btn').onclick = () => {
+  document.querySelector('.dropdown-content').classList.toggle('show');
+};
+
+// Show options for Resume Viewer, hide for Report Viewer
+resumeViewer.onclick = () => {
+  resumeOptions.classList.remove('hidden');
+  fileInput.value = ""; // Clear any previously selected file
+  viewFileButton.disabled = true; // Reset view button
+};
+
+reportViewer.onclick = () => {
+  resumeOptions.classList.add('hidden');
+  alert("Report Viewer is currently a dummy option.");
+};
+
+// Webcam and call setup
 webcamButton.onclick = async () => {
   if (!localUsername) {
     alert("Please enter a username before starting the webcam.");
@@ -72,12 +95,10 @@ webcamButton.onclick = async () => {
   localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
   remoteStream = new MediaStream();
 
-  // Push tracks from local stream to peer connection
   localStream.getTracks().forEach((track) => {
     pc.addTrack(track, localStream);
   });
 
-  // Pull tracks from remote stream, add to video stream
   pc.ontrack = (event) => {
     event.streams[0].getTracks().forEach((track) => {
       remoteStream.addTrack(track);
@@ -90,11 +111,25 @@ webcamButton.onclick = async () => {
   callButton.disabled = false;
   answerButton.disabled = false;
   webcamButton.disabled = true;
+  webcamToggleButton.disabled = false;
+  audioToggleButton.disabled = false;
 };
 
-// 2. Create an offer
+webcamToggleButton.onclick = () => {
+  const videoTrack = localStream.getVideoTracks()[0];
+  videoTrack.enabled = !videoTrack.enabled;
+  webcamToggleButton.textContent = videoTrack.enabled ? "Turn Webcam Off" : "Turn Webcam On";
+};
+
+audioToggleButton.onclick = () => {
+  const audioTrack = localStream.getAudioTracks()[0];
+  audioTrack.enabled = !audioTrack.enabled;
+  audioToggleButton.textContent = audioTrack.enabled ? "Turn Audio Off" : "Turn Audio On";
+};
+
+// Call setup
 callButton.onclick = async () => {
-  const callDoc = firestore.collection('calls').doc();
+  callDoc = firestore.collection('calls').doc();
   const offerCandidates = callDoc.collection('offerCandidates');
   const answerCandidates = callDoc.collection('answerCandidates');
   const chatMessagesCollection = callDoc.collection('chatMessages');
@@ -111,7 +146,8 @@ callButton.onclick = async () => {
   const offer = {
     sdp: offerDescription.sdp,
     type: offerDescription.type,
-    username: localUsername, // Store local username in offer data
+    username: localUsername,
+    hangup: false,
   };
 
   await callDoc.set({ offer });
@@ -123,6 +159,10 @@ callButton.onclick = async () => {
       pc.setRemoteDescription(answerDescription);
       remoteUsername = data.answer.username;
       remoteUsernameDiv.textContent = remoteUsername;
+    }
+
+    if (data?.offer?.hangup && isCallActive) {
+      handleRemoteHangup();
     }
   });
 
@@ -137,25 +177,27 @@ callButton.onclick = async () => {
 
   hangupButton.disabled = false;
   sendButton.disabled = false;
-  sendFileButton.disabled = false;
+  viewFileButton.disabled = false;
 
-  // Listen for chat messages
   chatMessagesCollection.orderBy('timestamp').onSnapshot((snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      const messageData = change.doc.data();
-      if (messageData.type === 'file' && messageData.fileName) {
-        displayFileLink(messageData.username, messageData.fileName);
-      } else if (messageData.type === 'text') {
-        displayMessage(messageData.username, messageData.message);
-      }
-    });
+    if (isCallActive) {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          const messageData = change.doc.data();
+          if (messageData.fileUrl) {
+            displayFileLink(messageData.username, messageData.fileUrl);
+          } else {
+            displayMessage(messageData.username, messageData.message);
+          }
+        }
+      });
+    }
   });
 };
 
-// 3. Answer the call with the unique ID
 answerButton.onclick = async () => {
   const callId = callInput.value;
-  const callDoc = firestore.collection('calls').doc(callId);
+  callDoc = firestore.collection('calls').doc(callId);
   const answerCandidates = callDoc.collection('answerCandidates');
   const offerCandidates = callDoc.collection('offerCandidates');
   const chatMessagesCollection = callDoc.collection('chatMessages');
@@ -178,44 +220,55 @@ answerButton.onclick = async () => {
     type: answerDescription.type,
     sdp: answerDescription.sdp,
     username: localUsername,
+    hangup: false,
   };
 
   await callDoc.update({ answer });
 
   offerCandidates.onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((change) => {
-      const data = change.doc.data();
-      pc.addIceCandidate(new RTCIceCandidate(data));
+      if (change.type === 'added') {
+        let data = change.doc.data();
+        pc.addIceCandidate(new RTCIceCandidate(data));
+      }
     });
   });
 
   hangupButton.disabled = false;
   sendButton.disabled = false;
-  sendFileButton.disabled = false;
+  viewFileButton.disabled = false;
 
-  // Listen for chat messages
   chatMessagesCollection.orderBy('timestamp').onSnapshot((snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      const messageData = change.doc.data();
-      if (messageData.type === 'file' && messageData.fileName) {
-        displayFileLink(messageData.username, messageData.fileName);
-      } else if (messageData.type === 'text') {
-        displayMessage(messageData.username, messageData.message);
-      }
-    });
+    if (isCallActive) {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          const messageData = change.doc.data();
+          if (messageData.fileUrl) {
+            displayFileLink(messageData.username, messageData.fileUrl);
+          } else {
+            displayMessage(messageData.username, messageData.message);
+          }
+        }
+      });
+    }
+  });
+
+  callDoc.onSnapshot((snapshot) => {
+    const data = snapshot.data();
+    if (data?.offer?.hangup && isCallActive) {
+      handleRemoteHangup();
+    }
   });
 };
 
-// 4. Send chat message
 sendButton.onclick = async () => {
   const callId = callInput.value;
   const callDoc = firestore.collection('calls').doc(callId);
   const chatMessagesCollection = callDoc.collection('chatMessages');
 
   const message = chatInput.value;
-  if (message) {
+  if (message && isCallActive) {
     await chatMessagesCollection.add({
-      type: 'text',
       username: localUsername,
       message: message,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -224,34 +277,17 @@ sendButton.onclick = async () => {
   }
 };
 
-// 5. Send PDF file
-sendFileButton.onclick = async () => {
+// View PDF functionality
+viewFileButton.onclick = async () => {
   const file = fileInput.files[0];
   if (file && file.type === "application/pdf") {
-    const callId = callInput.value;
-    const callDoc = firestore.collection('calls').doc(callId);
-    const chatMessagesCollection = callDoc.collection('chatMessages');
-
-    // Convert file to blob URL
-    const fileReader = new FileReader();
-    fileReader.onload = async () => {
-      const pdfBlobUrl = fileReader.result;
-      pdfDummyStore[file.name] = pdfBlobUrl; // Save in dummy store
-
-      await chatMessagesCollection.add({
-        type: 'file',
-        username: localUsername,
-        fileName: file.name,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      });
-    };
-    fileReader.readAsDataURL(file);
+    const fileURL = URL.createObjectURL(file);
+    openPdfViewer(fileURL);
   } else {
-    alert("Please select a valid PDF file.");
+    alert("Please select a PDF file.");
   }
 };
 
-// 6. Display chat message
 function displayMessage(username, message) {
   const messageElement = document.createElement('div');
   messageElement.className = "message";
@@ -260,58 +296,60 @@ function displayMessage(username, message) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// 7. Display file link in chat
-function displayFileLink(username, fileName) {
+function displayFileLink(username, fileUrl) {
   const messageElement = document.createElement('div');
   messageElement.className = "message";
   const linkElement = document.createElement('a');
   linkElement.href = "#";
-  linkElement.textContent = `${username} sent a PDF: ${fileName}`;
+  linkElement.textContent = `${username} sent a PDF`;
   linkElement.onclick = (e) => {
     e.preventDefault();
-    openPdfViewer(fileName);
+    openPdfViewer(fileUrl);
   };
   messageElement.appendChild(linkElement);
   chatMessages.appendChild(messageElement);
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// 8. Open PDF viewer
-function openPdfViewer(fileName) {
-  if (pdfDummyStore[fileName]) {
-    pdfViewer.src = pdfDummyStore[fileName];
-    pdfViewerContainer.style.display = "block";
-  } else {
-    alert("PDF not available.");
-  }
+function openPdfViewer(url) {
+  pdfViewer.src = url;
+  pdfViewerContainer.style.display = "block";
 }
 
-// 9. Close PDF viewer
 closePdfButton.onclick = () => {
-  pdfViewer.src = "";
   pdfViewerContainer.style.display = "none";
+  pdfViewer.src = "";
 };
 
-// 10. Hangup function
-hangupButton.onclick = () => {
-  pc.close();
-  localStream.getTracks().forEach((track) => track.stop());
-  remoteStream.getTracks().forEach((track) => track.stop());
+function blackoutScreen(videoElement) {
+  videoElement.srcObject = null;
+  videoElement.style.backgroundColor = "black";
+}
 
-  webcamVideo.srcObject = null;
-  remoteVideo.srcObject = null;
-
+function disableAllFeatures() {
+  webcamButton.disabled = true;
+  webcamToggleButton.disabled = true;
+  audioToggleButton.disabled = true;
   callButton.disabled = true;
   answerButton.disabled = true;
   hangupButton.disabled = true;
-  webcamButton.disabled = false;
   sendButton.disabled = true;
-  sendFileButton.disabled = true;
+  viewFileButton.disabled = true;
+}
 
-  callInput.value = '';
-  localUsernameDiv.textContent = "";
-  remoteUsernameDiv.textContent = "";
-  chatMessages.innerHTML = "";
+function handleRemoteHangup() {
+  blackoutScreen(remoteVideo);
+  remoteUsernameDiv.textContent = ""; // Hide the remote username
+}
 
-  console.log("Call ended.");
+hangupButton.onclick = async () => {
+  if (callDoc) {
+    await callDoc.update({
+      "offer.hangup": true,
+    });
+  }
+  blackoutScreen(webcamVideo);
+  pc.close();
+  disableAllFeatures();
+  isCallActive = false;
 };

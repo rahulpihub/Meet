@@ -1,57 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WebRTC Demo</title>
-  </head>
-  <body>
-    <h2>Enter your Username</h2>
-    <input id="usernameInput" placeholder="Enter your username" />
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebRTC Demo</title>
+</head>
+<body>
+  <h2>Enter your Username</h2>
+  <input id="usernameInput" placeholder="Enter your username" />
 
-    <h2>1. Start your Webcam</h2>
-    <div class="videos">
-      <span>
-        <h3>Local Stream</h3>
-        <video id="webcamVideo" autoplay playsinline></video>
-        <div id="localUsername" class="username"></div>
-      </span>
-      <span>
-        <h3>Remote Stream</h3>
-        <video id="remoteVideo" autoplay playsinline></video>
-        <div id="remoteUsername" class="username"></div>
-      </span>
+  <h2>1. Start your Webcam</h2>
+  <div class="videos">
+    <span>
+      <video id="webcamVideo" autoplay playsinline></video>
+      <div id="localUsername" class="username"></div>
+    </span>
+    <span>
+      <video id="remoteVideo" autoplay playsinline></video>
+      <div id="remoteUsername" class="username"></div>
+    </span>
+  </div>
+
+  <button id="webcamButton">Create Meeting</button>
+  <button id="webcamToggleButton" disabled>Turn Webcam Off</button>
+  <button id="audioToggleButton" disabled>Turn Audio Off</button>
+  
+  <h2>2. Create a new Call</h2>
+  <button id="callButton" disabled>Create Call (offer)</button>
+
+  <h2>3. Join a Call</h2>
+  <input id="callInput" placeholder="Enter call ID" />
+  <button id="answerButton" disabled>Answer</button>
+
+  <h2>4. Hangup</h2>
+  <button id="hangupButton" disabled>Hangup</button>
+
+  <h2>Chat</h2>
+  <div id="chatContainer">
+    <div id="chatMessages" class="chat-box"></div>
+    <input id="chatInput" placeholder="Enter message" />
+    <button id="sendButton" disabled>Send</button>
+  </div>
+
+  <!-- Tools Dropdown Menu -->
+  <div class="dropdown">
+    <button class="dropdown-btn">Tools</button>
+    <div class="dropdown-content">
+      <button id="resumeViewer">Resume Viewer</button>
+      <button id="reportViewer">Report Viewer</button>
+      <div id="resumeOptions" class="hidden">
+        <input type="file" id="fileInput" accept="application/pdf" />
+        <button id="viewFileButton" disabled>View PDF</button>
+      </div>
     </div>
+  </div>
 
-    <button id="webcamButton">Start webcam</button>
-    <h2>2. Create a new Call</h2>
-    <button id="callButton" disabled>Create Call (offer)</button>
+  <div id="pdfViewerContainer" class="pdf-viewer">
+    <button id="closePdfButton">Close PDF</button>
+    <iframe id="pdfViewer" src="" width="100%" height="600px"></iframe>
+  </div>
 
-    <h2>3. Join a Call</h2>
-    <p>Answer the call from a different browser window or device</p>
-    <input id="callInput" placeholder="Enter call ID" />
-    <button id="answerButton" disabled>Answer</button>
-
-    <h2>4. Hangup</h2>
-    <button id="hangupButton" disabled>Hangup</button>
-
-    <!-- Chat Section -->
-    <h2>Chat</h2>
-    <div id="chatContainer">
-      <div id="chatMessages" class="chat-box"></div>
-      <input id="chatInput" placeholder="Enter message" />
-      <button id="sendButton" disabled>Send</button>
-      <input type="file" id="fileInput" accept="application/pdf" />
-      <button id="sendFileButton" disabled>Send PDF</button>
-    </div>
-
-    <!-- PDF Viewer Section -->
-    <div id="pdfViewerContainer" class="pdf-viewer">
-      <button id="closePdfButton">Close PDF</button>
-      <iframe id="pdfViewer" src="" width="100%" height="600px"></iframe>
-    </div>
-
-    <script type="module" src="/main.js"></script>
-  </body>
+  <script type="module" src="/main.js"></script>
+</body>
 </html>
