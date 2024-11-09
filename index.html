@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,65 +7,51 @@
   <title>WebRTC Demo</title>
 </head>
 <body>
-  <h2>INTERVIEW</h2>
+  <h2>Enter your Username</h2>
   <input id="usernameInput" placeholder="Enter your username" />
+
+  <h2>1. Start your Webcam</h2>
+  <div class="videos">
+    <span>
+      <video id="webcamVideo" autoplay playsinline></video>
+      <div id="localUsername" class="username"></div>
+    </span>
+    <span>
+      <video id="remoteVideo" autoplay playsinline></video>
+      <div id="remoteUsername" class="username"></div>
+    </span>
+  </div>
+
   <button id="webcamButton">Create Meeting</button>
-  <p>or</p>
-  <button id="callButton" disabled>Create Code</button>
-  <input id="callInput" placeholder="Enter code" />
-  <button id="answerButton" disabled>Join</button>
-  <!-- Main container for videos and sidebar -->
-  <div class="main-container">
-    <!-- Video Section -->
-    <div class="video-section">
-      <div class="videos">
-        <span>
-          <video id="webcamVideo" autoplay playsinline></video>
-          <div id="localUsername" class="username"></div>
-        </span>
-        <span>
-          <video id="remoteVideo" autoplay playsinline></video>
-          <div id="remoteUsername" class="username"></div>
-        </span>
-      </div>
-    
-      <!-- <button id="webcamButton">Create Meeting</button> -->
-    
-      <!-- Button container for horizontal alignment -->
-      <div class="button-container">
-        <button id="webcamToggleButton" disabled>Turn Webcam Off</button>
-        <button id="audioToggleButton" disabled>Turn Audio Off</button>
-        <button id="leaveButton" disabled>Leave</button>
-      </div>
-    </div>
-    
+  <button id="webcamToggleButton" disabled>Turn Webcam Off</button>
+  <button id="audioToggleButton" disabled>Turn Audio Off</button>
+  
+  <h2>2. Create a new Call</h2>
+  <button id="callButton" disabled>Create Call (offer)</button>
 
-    <!-- Sidebar with Chat and Tools -->
-    <div class="sidebar">
-      <!-- Chat Section -->
-      <div class="chat-section">
-        <h2>Chat Box</h2>
-        <div id="chatContainer">
-          <div id="chatMessages" class="chat-box"></div>
-        </div>
-        <div class="chat-input-container">
-          <input id="chatInput" placeholder="Enter message" />
-          <button id="sendButton" disabled>Send</button>
-        </div>
-      </div>
+  <h2>3. Join a Call</h2>
+  <input id="callInput" placeholder="Enter call ID" />
+  <button id="answerButton" disabled>Answer</button>
 
-      <!-- Tools Section -->
-      <div class="tools-section">
-        <!-- <h2>Tools</h2> -->
-        <button class="dropdown-btn">Tools</button>
-        <div class="dropdown-content">
-          <button id="resumeViewer">Resume Viewer</button>
-          <button id="reportViewer">Report Viewer</button>
-          <div id="resumeOptions" class="hidden">
-            <input type="file" id="fileInput" accept="application/pdf" />
-            <button id="viewFileButton" disabled>View PDF</button>
-          </div>
-        </div>
+  <h2>4. Hangup</h2>
+  <button id="hangupButton" disabled>Hangup</button>
+
+  <h2>Chat</h2>
+  <div id="chatContainer">
+    <div id="chatMessages" class="chat-box"></div>
+    <input id="chatInput" placeholder="Enter message" />
+    <button id="sendButton" disabled>Send</button>
+  </div>
+
+  <!-- Tools Dropdown Menu -->
+  <div class="dropdown">
+    <button class="dropdown-btn">Tools</button>
+    <div class="dropdown-content">
+      <button id="resumeViewer">Resume Viewer</button>
+      <button id="reportViewer">Report Viewer</button>
+      <div id="resumeOptions" class="hidden">
+        <input type="file" id="fileInput" accept="application/pdf" />
+        <button id="viewFileButton" disabled>View PDF</button>
       </div>
     </div>
   </div>
@@ -78,5 +63,4 @@
 
   <script type="module" src="/main.js"></script>
 </body>
-
 </html>
