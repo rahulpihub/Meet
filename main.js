@@ -288,6 +288,12 @@ viewFileButton.onclick = async () => {
   }
 };
 
+fileInput.onchange = () => {
+  const file = fileInput.files[0];
+  viewFileButton.disabled = !(file && file.type === "application/pdf");
+};
+
+
 function displayMessage(username, message) {
   const messageElement = document.createElement('div');
   messageElement.className = "message";
