@@ -199,3 +199,19 @@ input:focus {
   border-radius: 5px;
   cursor: pointer;
 }
+
+#webcamVideo {
+  transform: scaleX(-1);
+}
+
+
+/* Add this to your existing CSS file */
+#hangupButton {
+  background: #ff4d4d; /* Red background color */
+  color: #ffffff; /* White text color */
+}
+
+#hangupButton:hover:not(:disabled) {
+  background: #ff3333; /* Darker red on hover */
+}
+
