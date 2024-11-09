@@ -106,6 +106,7 @@ webcamButton.onclick = async () => {
   };
 
   webcamVideo.srcObject = localStream;
+  webcamVideo.muted = true;  // Mute local video to avoid self-hearing
   remoteVideo.srcObject = remoteStream;
 
   callButton.disabled = false;
@@ -292,13 +293,6 @@ fileInput.onchange = () => {
   const file = fileInput.files[0];
   viewFileButton.disabled = !(file && file.type === "application/pdf");
 };
-
-
-fileInput.onchange = () => {
-  const file = fileInput.files[0];
-  viewFileButton.disabled = !(file && file.type === "application/pdf");
-};
-
 
 function displayMessage(username, message) {
   const messageElement = document.createElement('div');
