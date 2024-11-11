@@ -57,6 +57,8 @@ const viewFileButton = document.getElementById('viewFileButton');
 const pdfViewerContainer = document.getElementById('pdfViewerContainer');
 const pdfViewer = document.getElementById('pdfViewer');
 const closePdfButton = document.getElementById('closePdfButton');
+const emailInput = document.getElementById('emailInput');
+const sendEmailButton = document.getElementById('sendEmailButton');
 
 // Dropdown elements
 const resumeViewer = document.getElementById('resumeViewer');
@@ -95,18 +97,21 @@ webcamButton.onclick = async () => {
   localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
   remoteStream = new MediaStream();
 
+  // Add video and audio tracks to peer connection for remote user
   localStream.getTracks().forEach((track) => {
     pc.addTrack(track, localStream);
   });
 
+  // Assign local video stream
+  webcamVideo.srcObject = localStream;
+
+  // Listen for remote stream and assign it only to remote video
   pc.ontrack = (event) => {
     event.streams[0].getTracks().forEach((track) => {
       remoteStream.addTrack(track);
     });
   };
 
-  webcamVideo.srcObject = localStream;
-  webcamVideo.muted = true;  // Mute local video to avoid self-hearing
   remoteVideo.srcObject = remoteStream;
 
   callButton.disabled = false;
@@ -116,12 +121,14 @@ webcamButton.onclick = async () => {
   audioToggleButton.disabled = false;
 };
 
+// Toggle webcam video
 webcamToggleButton.onclick = () => {
   const videoTrack = localStream.getVideoTracks()[0];
   videoTrack.enabled = !videoTrack.enabled;
   webcamToggleButton.textContent = videoTrack.enabled ? "Turn Webcam Off" : "Turn Webcam On";
 };
 
+// Toggle audio
 audioToggleButton.onclick = () => {
   const audioTrack = localStream.getAudioTracks()[0];
   audioTrack.enabled = !audioTrack.enabled;
@@ -180,6 +187,7 @@ callButton.onclick = async () => {
   sendButton.disabled = false;
   viewFileButton.disabled = false;
 
+  // Real-time chat listener
   chatMessagesCollection.orderBy('timestamp').onSnapshot((snapshot) => {
     if (isCallActive) {
       snapshot.docChanges().forEach((change) => {
@@ -194,6 +202,68 @@ callButton.onclick = async () => {
       });
     }
   });
+
+  // Enable email input and send button after code creation
+  sendEmailButton.disabled = false;
+};
+
+// Send chat message
+sendButton.onclick = async () => {
+  const message = chatInput.value.trim();
+  if (message === "") return;
+
+  const chatMessagesCollection = callDoc.collection('chatMessages');
+
+  await chatMessagesCollection.add({
+    username: localUsername,
+    message: message,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+  });
+
+  chatInput.value = ""; // Clear the chat input field
+};
+
+// File selection for PDF viewing
+fileInput.onchange = () => {
+  const file = fileInput.files[0];
+  viewFileButton.disabled = !(file && file.type === "application/pdf");
+};
+
+// Upload and view PDF (New Functionality)
+viewFileButton.onclick = async () => {
+  const file = fileInput.files[0];
+  if (file && file.type === "application/pdf") {
+    const fileURL = URL.createObjectURL(file);
+    openPdfViewer(fileURL);
+  } else {
+    alert("Please select a PDF file.");
+  }
+};
+
+sendEmailButton.onclick = async () => {
+  const email = emailInput.value;
+  const code = callInput.value;
+
+  if (!email) {
+    alert("Please enter an email address.");
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:5000/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code }),
+    });
+
+    if (response.ok) {
+      alert("Email sent successfully!");
+    } else {
+      alert("Failed to send email.");
+    }
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
 };
 
 answerButton.onclick = async () => {
@@ -260,38 +330,6 @@ answerButton.onclick = async () => {
       handleRemoteHangup();
     }
   });
-};
-
-sendButton.onclick = async () => {
-  const callId = callInput.value;
-  const callDoc = firestore.collection('calls').doc(callId);
-  const chatMessagesCollection = callDoc.collection('chatMessages');
-
-  const message = chatInput.value;
-  if (message && isCallActive) {
-    await chatMessagesCollection.add({
-      username: localUsername,
-      message: message,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-    chatInput.value = "";
-  }
-};
-
-// View PDF functionality
-viewFileButton.onclick = async () => {
-  const file = fileInput.files[0];
-  if (file && file.type === "application/pdf") {
-    const fileURL = URL.createObjectURL(file);
-    openPdfViewer(fileURL);
-  } else {
-    alert("Please select a PDF file.");
-  }
-};
-
-fileInput.onchange = () => {
-  const file = fileInput.files[0];
-  viewFileButton.disabled = !(file && file.type === "application/pdf");
 };
 
 function displayMessage(username, message) {

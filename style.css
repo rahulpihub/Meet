@@ -214,4 +214,3 @@ input:focus {
 #hangupButton:hover:not(:disabled) {
   background: #ff3333; /* Darker red on hover */
 }
-

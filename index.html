@@ -4,13 +4,18 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SNS Meet Development</title>
+  <title>SNS Meet</title>
 </head>
 <body>
   <h2>INTERVIEW</h2>
   <input id="usernameInput" placeholder="Enter your username" />
+  <button id="webcamButton">Create Meeting</button>
+  <button id="callButton" disabled>Create Code</button>
+  <input id="callInput" placeholder="Enter code" />
+  <button id="answerButton" disabled>Join</button>
+  <input id="emailInput" placeholder="Enter candidate email" />
+  <button id="sendEmailButton" disabled>Send Mail</button>
 
-  <h2>Welcome to SNS-Meet</h2>
   <div class="videos">
     <span>
       <video id="webcamVideo" autoplay playsinline></video>
@@ -21,20 +26,9 @@
       <div id="remoteUsername" class="username"></div>
     </span>
   </div>
-
-  <button id="webcamButton">Create Meeting</button>
   <button id="webcamToggleButton" disabled>Turn Webcam Off</button>
   <button id="audioToggleButton" disabled>Turn Audio Off</button>
-  
-  <h2>2. Create a new Call</h2>
-  <button id="callButton" disabled>Create Code</button>
-
-  <h2>3. Join a Call</h2>
-  <input id="callInput" placeholder="Enter call ID" />
-  <button id="answerButton" disabled>Answer Call</button>
-
-  <h2>4. Hangup</h2>
-  <button id="hangupButton" disabled>Leave Call</button>
+  <button id="hangupButton" disabled>Leave</button>
 
   <h2>Chat</h2>
   <div id="chatContainer">
@@ -43,7 +37,6 @@
     <button id="sendButton" disabled>Send</button>
   </div>
 
-  <!-- Tools Dropdown Menu -->
   <div class="dropdown">
     <button class="dropdown-btn">Tools</button>
     <div class="dropdown-content">
