@@ -57,6 +57,8 @@ const viewFileButton = document.getElementById('viewFileButton');
 const pdfViewerContainer = document.getElementById('pdfViewerContainer');
 const pdfViewer = document.getElementById('pdfViewer');
 const closePdfButton = document.getElementById('closePdfButton');
+const emailInput = document.getElementById('emailInput');
+const sendEmailButton = document.getElementById('sendEmailButton');
 
 // Dropdown elements
 const resumeViewer = document.getElementById('resumeViewer');
@@ -106,7 +108,6 @@ webcamButton.onclick = async () => {
   };
 
   webcamVideo.srcObject = localStream;
-  webcamVideo.muted = true;  // Mute local video to avoid self-hearing
   remoteVideo.srcObject = remoteStream;
 
   callButton.disabled = false;
@@ -194,6 +195,35 @@ callButton.onclick = async () => {
       });
     }
   });
+
+  // Enable email input and send button after code creation
+  sendEmailButton.disabled = false;
+};
+
+sendEmailButton.onclick = async () => {
+  const email = emailInput.value;
+  const code = callInput.value;
+
+  if (!email) {
+    alert("Please enter an email address.");
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:5000/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code }),
+    });
+
+    if (response.ok) {
+      alert("Email sent successfully!");
+    } else {
+      alert("Failed to send email.");
+    }
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
 };
 
 answerButton.onclick = async () => {
@@ -260,38 +290,6 @@ answerButton.onclick = async () => {
       handleRemoteHangup();
     }
   });
-};
-
-sendButton.onclick = async () => {
-  const callId = callInput.value;
-  const callDoc = firestore.collection('calls').doc(callId);
-  const chatMessagesCollection = callDoc.collection('chatMessages');
-
-  const message = chatInput.value;
-  if (message && isCallActive) {
-    await chatMessagesCollection.add({
-      username: localUsername,
-      message: message,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-    chatInput.value = "";
-  }
-};
-
-// View PDF functionality
-viewFileButton.onclick = async () => {
-  const file = fileInput.files[0];
-  if (file && file.type === "application/pdf") {
-    const fileURL = URL.createObjectURL(file);
-    openPdfViewer(fileURL);
-  } else {
-    alert("Please select a PDF file.");
-  }
-};
-
-fileInput.onchange = () => {
-  const file = fileInput.files[0];
-  viewFileButton.disabled = !(file && file.type === "application/pdf");
 };
 
 function displayMessage(username, message) {
