@@ -114,9 +114,15 @@ webcamButton.onclick = async () => {
 
   remoteVideo.srcObject = remoteStream;
 
+  // Mute the local audio for the current user (No self-hearing)
+  localStream.getAudioTracks().forEach(track => {
+    track.enabled = false; // Disable audio so the user can't hear themselves
+  });
+
   callButton.disabled = false;
   answerButton.disabled = false;
   webcamButton.disabled = true;
+  webcamVideo.muted = true;  // Mute local video to avoid self-hearing
   webcamToggleButton.disabled = false;
   audioToggleButton.disabled = false;
 };
@@ -240,6 +246,7 @@ viewFileButton.onclick = async () => {
   }
 };
 
+// Email sending functionality
 sendEmailButton.onclick = async () => {
   const email = emailInput.value;
   const code = callInput.value;
@@ -266,7 +273,7 @@ sendEmailButton.onclick = async () => {
   }
 };
 
-
+// Handling when the call ends
 answerButton.onclick = async () => {
   const callId = callInput.value;
   callDoc = firestore.collection('calls').doc(callId);
