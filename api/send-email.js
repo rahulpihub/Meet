@@ -24,6 +24,7 @@ export default async function handler(req, res) {
     Interview Details:
     Link to Join: https://interview-taupe-nine.vercel.app/
     Unique Call Code: ${code}
+    
     Instructions:
     At your scheduled interview time, click the link provided above to open the interview platform.
     Enter Your Unique Call Code: You will be prompted to enter your unique code (${code}). This code connects you directly with our HR representative.
