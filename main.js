@@ -250,7 +250,7 @@ sendEmailButton.onclick = async () => {
   }
 
   try {
-    const response = await fetch('http://localhost:5000/send-email', {
+    const response = await fetch('/api/send-email', {  // Updated endpoint
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, code }),
@@ -265,6 +265,7 @@ sendEmailButton.onclick = async () => {
     console.error("Error sending email:", error);
   }
 };
+
 
 answerButton.onclick = async () => {
   const callId = callInput.value;
