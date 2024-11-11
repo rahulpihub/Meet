@@ -27,7 +27,7 @@ app.post('/send-email', (req, res) => {
   const mailOptions = {
     from: process.env.YOUR_EMAIL,
     to: email,
-    subject: 'Final HR Interview - Access Link and Call Code',
+    subject: 'Final HR server mjs - Access Link and Call Code',
     text: `Dear Candidate,
 
 We are pleased to invite you to the next stage of our hiring process—a virtual HR interview. Please review the instructions below to ensure a smooth and successful meeting.
