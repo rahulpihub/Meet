@@ -114,10 +114,7 @@ webcamButton.onclick = async () => {
 
   remoteVideo.srcObject = remoteStream;
 
-  // Mute the local audio for the current user (No self-hearing)
-  localStream.getAudioTracks().forEach(track => {
-    track.enabled = false; // Disable audio so the user can't hear themselves
-  });
+
 
   callButton.disabled = false;
   answerButton.disabled = false;
