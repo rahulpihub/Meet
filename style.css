@@ -11,7 +11,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   min-height: 100vh;
   background: #ffffff;
   color: #000000;
@@ -22,6 +21,23 @@ h2, h3 {
   margin: 1rem 0;
   font-weight: bold;
   color: #000000;
+}
+
+.section-header {
+  margin-top: 2rem;
+  color: #000000;
+  font-size: 1.5rem;
+}
+
+.inline-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.inline-container input {
+  flex: 1;
 }
 
 .videos {
@@ -96,22 +112,55 @@ input:focus {
   font-family: 'Syne Mono', monospace;
 }
 
-.chat-box {
-  width: 100%;
-  height: 200px;
-  overflow-y: scroll;
-  border: 1px solid #ffffff;
-  padding: 10px;
-  background-color: #ffffff;
-  color: #000000;
-  border-radius: 5px;
+/* Chat Box on Right Side */
+#chatContainer {
+  position: static;
+  width: 1025px;
+  height: 400px;
+  background-color: #00000041;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  padding: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-left: 25px;
+  margin-right: 25px;
   margin-top: 1rem;
-  border-color: #000000;
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
 }
 
-.message {
-  margin: 5px 0;
-  font-weight: bold;
+#chatMessages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+#chatInput {
+  width: calc(100% - 10px);
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+#sendButton {
+  width: 80px;
+  display: flex;
+  align-items: center;
+}
+
+/* Controls at Bottom Left */
+.controls-container {
+  position: static;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  margin-bottom: 20px;
+  margin-left: 10px;
 }
 
 .dropdown {
@@ -205,13 +254,30 @@ input:focus {
   transform: scaleX(-1);
 }
 
-
-/* Add this to your existing CSS file */
 #hangupButton {
-  background: #ff4d4d; /* Red background color */
-  color: #ffffff; /* White text color */
+  background: #ff4d4d;
+  color: #ffffff;
 }
 
 #hangupButton:hover:not(:disabled) {
-  background: #ff3333; /* Darker red on hover */
+  background: #ff3333;
+}
+
+#titleContainer {
+  border: 4px solid #000000;
+  padding: 1.5rem;
+  display: block;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  background-color: #256ad3;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#mainTitle {
+  font-size: 3rem;
+  color: #ffffff;
+  font-weight: bold;
+  margin: 0;
 }

@@ -5,14 +5,25 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SNS Meet Development</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h2>SNS MEET</h2>
+  <div id="titleContainer">
+    <h2 id="mainTitle">SNS Meet</h2>
+  </div>
   <input id="usernameInput" placeholder="Enter your username" />
   <button id="webcamButton">Create Meeting</button>
-  <button id="callButton" disabled>Create Code</button>
-  <input id="callInput" placeholder="Enter code" />
-  <button id="answerButton" disabled>Join</button>
+
+  <!-- Create Meeting ID and Enter Code in a single line -->
+  <div class="inline-container">
+    <button id="callButton" disabled>Create Meeting ID</button>
+    <input id="callInput" placeholder="Enter code" />
+  </div>
+
+  <button id="answerButton" disabled>Join Meeting</button>
+
+  <!-- Added h3 Tag for Send Meeting ID Section -->
+  <h3 class="section-header">Send Meeting ID via Mail</h3>
   <input id="emailInput" placeholder="Enter candidate email" />
   <button id="sendEmailButton" disabled>Send Mail</button>
 
@@ -26,27 +37,31 @@
       <div id="remoteUsername" class="username"></div>
     </span>
   </div>
-  <button id="webcamToggleButton" disabled>Turn Webcam Off</button>
-  <button id="audioToggleButton" disabled>Turn Audio Off</button>
-  <button id="hangupButton" disabled>Leave</button>
 
-  <h2>Chat</h2>
-  <div id="chatContainer">
-    <div id="chatMessages" class="chat-box"></div>
-    <input id="chatInput" placeholder="Enter message" />
-    <button id="sendButton" disabled>Send</button>
-  </div>
-
-  <div class="dropdown">
-    <button class="dropdown-btn">Tools</button>
-    <div class="dropdown-content">
-      <button id="resumeViewer">Resume Viewer</button>
-      <button id="reportViewer">Report Viewer</button>
-      <div id="resumeOptions" class="hidden">
-        <input type="file" id="fileInput" accept="application/pdf" />
-        <button id="viewFileButton" disabled>View PDF</button>
+  <!-- Controls at Bottom Left -->
+  <div class="controls-container">
+    <button id="webcamToggleButton" disabled>Turn Webcam Off</button>
+    <button id="audioToggleButton" disabled>Turn Audio Off</button>
+    <button id="hangupButton" disabled>Leave</button>
+    <div class="dropdown">
+      <button class="dropdown-btn">Tools</button>
+      <div class="dropdown-content">
+        <button id="resumeViewer">Resume Viewer</button>
+        <button id="reportViewer">Report Viewer</button>
+        <div id="resumeOptions" class="hidden">
+          <input type="file" id="fileInput" accept="application/pdf" />
+          <button id="viewFileButton" disabled>View PDF</button>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- Chat Section on Right Side -->
+  <div id="chatContainer" class="chat-box">
+    <h2>Chat</h2>
+    <div id="chatMessages"></div>
+    <input id="chatInput" placeholder="Enter message" />
+    <button id="sendButton" disabled>Send</button>
   </div>
 
   <div id="pdfViewerContainer" class="pdf-viewer">
