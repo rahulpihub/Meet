@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     We are pleased to invite you to the next stage of our hiring process—a virtual HR interview. Please review the instructions below to ensure a smooth and successful meeting.
     
     Interview Details:
-    Link to Join: https://interview-jufi6pb4u-rahuls-projects-13e18543.vercel.app/
+    Link to Join: https://interview-rahuls-projects-13e18543.vercel.app/
     Unique Call Code: ${code}
     
     Instructions:
