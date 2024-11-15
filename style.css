@@ -12,7 +12,7 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background: #ffffff;
+  background: #fffeef;
   color: #000000;
 }
 
@@ -264,20 +264,22 @@ input:focus {
 }
 
 #titleContainer {
-  border: 4px solid #000000;
+  border-left: 2px solid #000000;
+  border-right: 2px solid #000000;
+  border-bottom: 4px solid #000000;
   padding: 1.5rem;
   display: block;
   text-align: center;
   margin-top: 0;
   margin-bottom: 2rem;
-  background-color: #256ad3;
+  background-color: #f4e514;
   width: 100%;
   box-sizing: border-box;
 }
 
 #mainTitle {
   font-size: 3rem;
-  color: #ffffff;
+  color: #000000;
   font-weight: bold;
   margin: 0;
 }
