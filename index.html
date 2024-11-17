@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -11,8 +10,10 @@
   <div id="titleContainer">
     <h2 id="mainTitle">SNS-Meet</h2>
   </div>
-  <input id="usernameInput" placeholder="Enter your username" />
-  <button id="webcamButton">Create Meeting</button>
+
+  <div class="face">
+    <input id="usernameInput" placeholder="Enter your username" />
+    <button id="webcamButton">Create Meeting</button>
 
   <!-- Create Meeting ID and Enter Code in a single line -->
   <div class="inline-container">
@@ -23,10 +24,10 @@
   <button id="answerButton" disabled>Join Meeting</button>
 
   <!-- Added h3 Tag for Send Meeting ID Section -->
-  <h3 class="section-header">Send Meeting ID by Mail</h3>
-  <input id="emailInput" placeholder="Enter candidate email" />
-  <button id="sendEmailButton" disabled>Send Mail</button>
-
+    <h3 class="section-header">Send Meeting ID by Mail</h3>
+    <input id="emailInput" placeholder="Enter candidate email" />
+    <button id="sendEmailButton" disabled>Send Mail</button>
+  </div>
   <div class="videos">
     <span>
       <video id="webcamVideo" autoplay playsinline></video>
