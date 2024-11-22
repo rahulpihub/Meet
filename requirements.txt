@@ -1,0 +1,6 @@
+firebase-admin==6.1.0
+firebase==4.0.1
+flask==2.3.3
+flask-cors==3.0.10
+nodemailer==6.9.3
+dotenv==0.21.0
